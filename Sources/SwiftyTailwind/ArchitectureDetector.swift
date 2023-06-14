@@ -13,6 +13,7 @@ protocol ArchitectureDetecting {
 
 class ArchitectureDetector: ArchitectureDetecting {
     func architecture() -> CpuArchitecture? {
+        SwiftCPUDetect.GeneralPrinter.enabled = false
         return CpuArchitecture.current()
     }
 }
