@@ -64,7 +64,7 @@ extension Set where Element == SwiftyTailwind.InitializeOption {
      Returns the flags to pass to the Tailwind CLI when invoking the `init` command.
      */
     var executableFlags: [String] {
-        return []
+        return self.map(\.flag)
     }
 }
 
