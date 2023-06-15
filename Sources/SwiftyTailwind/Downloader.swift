@@ -133,7 +133,7 @@ class Downloader: Downloading {
 
 private extension CpuArchitecture {
     /**
-        It maps the CpuArchitecture enum to the value used by Tailwind when uploading their artifacts to GitHub releases.
+        It maps the ``CpuArchitecture`` enum to the value used by Tailwind when uploading their artifacts to GitHub releases.
      */
     func tailwindCPUIdentifier() -> String? {
         switch self {

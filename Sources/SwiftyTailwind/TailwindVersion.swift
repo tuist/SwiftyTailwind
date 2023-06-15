@@ -1,6 +1,6 @@
 import Foundation
 
-enum TailwindVersion {
+public enum TailwindVersion {
     /**
     It pulls the latest version.
      */
