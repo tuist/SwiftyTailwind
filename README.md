@@ -35,6 +35,16 @@ To run Tailwind against a project, you can use the `run` function:
 try await subject.run(input: inputCSSPath, output: outputCSSPath, .content("views/**/*.html"))
 ```
 
+If you'd like Tailwind to watch keep running watching for file changes, you can pass the `.watch` option:
+
+
+```swift
+try await subject.run(input: inputCSSPath, 
+                      output: outputCSSPath, 
+                      .watch,
+                      .content("views/**/*.html"))
+```
+
 ## Sponsor
 
 If you appreciate this work, I kindly invite you to consider [sponsoring me](https://github.com/sponsors/pepicrft). Your support brings me one step closer to realizing my dream of making a living through open source contributions. With your sponsorship, I can continue dedicating my time and effort to creating valuable open source projects and providing ongoing support to the community. Together, let's fuel the advancement of open source and pave the way for a sustainable future.

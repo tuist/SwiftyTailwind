@@ -16,7 +16,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-tools-support-core.git", .upToNextMinor(from: "0.5.2")),
-        .package(url: "https://github.com/ITzTravelInTime/SwiftCPUDetect", .upToNextMinor(from: "1.3.0")),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0")
     ],
     targets: [
@@ -25,8 +24,7 @@ let package = Package(
         .target(
             name: "SwiftyTailwind",
             dependencies: [
-                .product(name: "SwiftToolsSupport-auto", package: "swift-tools-support-core"),
-                .product(name: "SwiftCPUDetect", package: "SwiftCPUDetect")
+                .product(name: "SwiftToolsSupport-auto", package: "swift-tools-support-core")
             ]
         ),
         .testTarget(

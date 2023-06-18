@@ -1,5 +1,12 @@
 import Foundation
-import SwiftCPUDetect
+import TSCBasic
+import TSCUtility
+
+public enum CpuArchitecture: String, Hashable  {
+    case arm64   = "arm64"
+    case armv7   = "armv7"
+    case x64   = "x64"
+}
 
 /**
  A protocol that declares an interface to obtain the CPU architecture of the environment in which the program is running.
@@ -13,7 +20,10 @@ protocol ArchitectureDetecting {
 
 class ArchitectureDetector: ArchitectureDetecting {
     func architecture() -> CpuArchitecture? {
-        SwiftCPUDetect.GeneralPrinter.enabled = false
-        return CpuArchitecture.current()
+        let process = Process(arguments: ["uname", "-m"], outputRedirection: .collect)
+        try? process.launch()
+        let result = try? process.waitUntilExit()
+        let output = try? result?.utf8Output().spm_chomp()
+        return CpuArchitecture(rawValue: output ?? "")
     }
 }

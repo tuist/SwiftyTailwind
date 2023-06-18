@@ -1,6 +1,5 @@
 import Foundation
 import OSLog
-import SwiftCPUDetect
 import TSCBasic
 
 /*
@@ -114,7 +113,7 @@ class Downloader: Downloading {
         It returns the name of the artifact that we should pull from the GitHub release. The artifact follows the convention: tailwindcss-{os}-{arch}
      */
     private func binaryName() -> String? {
-        guard let architecture = architectureDetector.architecture(), let tailwindArchitecture = architecture.tailwindCPUIdentifier() else {
+        guard let architecture = architectureDetector.architecture()?.rawValue else {
             return nil
         }
         var os: String!
@@ -127,19 +126,6 @@ class Downloader: Downloading {
         #else
         os = "macos"
         #endif
-        return "tailwindcss-\(os as String)-\(tailwindArchitecture)\(ext as String)"
-    }
-}
-
-private extension CpuArchitecture {
-    /**
-        It maps the ``CpuArchitecture`` enum to the value used by Tailwind when uploading their artifacts to GitHub releases.
-     */
-    func tailwindCPUIdentifier() -> String? {
-        switch self {
-        case .arm64: return "arm64"
-        case .intel64: return "x64"
-        default: return nil
-        }
+        return "tailwindcss-\(os as String)-\(architecture)\(ext as String)"
     }
 }
