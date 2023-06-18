@@ -1,4 +1,4 @@
-name: CI
+name: SwiftyTailwind
 on:
   push:
     branches:
