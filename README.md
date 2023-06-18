@@ -53,6 +53,6 @@ try await subject.run(input: inputCSSPath,
 
 Check out all the available options in the [documentation](https://swiftytailwind.pepicrft.me/documentation/swiftytailwind/swiftytailwind/runoption).
 
-## Sponsor
+## Sponsor ❤️
 
 If you appreciate this work, I kindly invite you to consider [sponsoring me](https://github.com/sponsors/pepicrft). Your support brings me one step closer to realizing my dream of making a living through open source contributions. With your sponsorship, I can continue dedicating my time and effort to creating valuable open source projects and providing ongoing support to the community. Together, let's fuel the advancement of open source and pave the way for a sustainable future.
