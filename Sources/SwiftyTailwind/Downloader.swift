@@ -70,7 +70,7 @@ class Downloader: Downloading {
         }
         let url = URL(string: "https://github.com/tailwindlabs/tailwindcss/releases/download/\(version)/\(name)")!
         logger.debug("Downloading binary \(name) from version \(version)...")
-        let (localURL, _) = try await URLSession.shared.download(from: url)
+        let (localURL, _) = try await URLSession(configuration: .default).download(from: url)
         let localPath = try! AbsolutePath(validating: localURL.path())
         logger.debug("Giving the binary executable permissions")
         try localFileSystem.chmod(.executable, path: localPath)
@@ -102,7 +102,7 @@ class Downloader: Downloading {
     private func latestVersion() async -> String {
         let latestReleaseURL = URL(string: "https://api.github.com/repos/tailwindlabs/tailwindcss/releases/latest")!
         logger.debug("Getting the latest Tailwind version from \(latestReleaseURL)")
-        let (data, _) = try! await URLSession.shared.data(from: latestReleaseURL)
+        let (data, _) = try! await URLSession(configuration: .default).data(from: latestReleaseURL)
         let json = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
         let tagName = json["tag_name"] as! String
         logger.debug("The latest Tailwind version available is \(tagName)")

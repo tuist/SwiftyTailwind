@@ -21,7 +21,7 @@ protocol ArchitectureDetecting {
 class ArchitectureDetector: ArchitectureDetecting {
     func architecture() -> CpuArchitecture? {
         let process = Process(arguments: ["uname", "-m"], outputRedirection: .collect)
-        try? process.launch()
+        _ = try? process.launch()
         let result = try? process.waitUntilExit()
         let output = try? result?.utf8Output().spm_chomp()
         return CpuArchitecture(rawValue: output ?? "")
