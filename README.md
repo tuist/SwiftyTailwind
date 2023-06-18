@@ -3,6 +3,7 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpepicrft%2FSwiftyTailwind%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/pepicrft/SwiftyTailwind)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fpepicrft%2FSwiftyTailwind%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/pepicrft/SwiftyTailwind)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/69daef71-b1cf-4d37-96ad-216cb953e668/deploy-status)](https://app.netlify.com/sites/swiftytailwind/deploys)
+[![SwiftyTailwind](https://github.com/pepicrft/SwiftyTailwind/actions/workflows/SwiftyTailwind.yml/badge.svg)](https://github.com/pepicrft/SwiftyTailwind/actions/workflows/SwiftyTailwind.yml)
 
 **SwiftyTailwind** is a Swift Package to lazily download and run the [Tailwind](https://tailwindcss.com) CLI from a Swift project (e.g. [Vapor](https://vapor.codes) app or [Publish](https://github.com/JohnSundell/Publish) project). 
 
