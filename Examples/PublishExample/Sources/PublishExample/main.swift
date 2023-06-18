@@ -25,7 +25,7 @@ let tailwind = SwiftyTailwind()
 try DeliciousRecipes().publish(withTheme: .tailwind, plugins: [
     .init(name: "Tailwind", installer: { context in
         let rootDirectory = try! AbsolutePath(validating: try context.folder(at: "/").path)
-        try await tailwind.run(input: rootDirectory.appending(components: ["Resources", "input.css"]),
-                               output: rootDirectory.appending(components: ["Resources", "output.css"]))
+        try await tailwind.run(input: rootDirectory.appending(components: ["Style", "input.css"]),
+                               output: rootDirectory.appending(components: ["Output", "output.css"]))
     })
 ])

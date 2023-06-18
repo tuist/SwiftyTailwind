@@ -4,10 +4,7 @@ import Plot
 
 extension Theme {
     static var tailwind: Self {
-        Theme(
-            htmlFactory: TailwindThemeFactory(),
-            resourcePaths: ["Resources/output.css"]
-        )
+        Theme(htmlFactory: TailwindThemeFactory())
     }
 }
 

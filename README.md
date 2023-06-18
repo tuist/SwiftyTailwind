@@ -39,7 +39,7 @@ Check out all the available options in [the documentation](https://swiftytailwin
 To run Tailwind against a project, you can use the [`run`](https://swiftytailwind.pepicrft.me/documentation/swiftytailwind/swiftytailwind/run(input:output:directory:options:)) function:
 
 ```swift
-try await subject.run(input: inputCSSPath, output: outputCSSPath, .content("views/**/*.html"))
+try await subject.run(input: inputCSSPath, output: outputCSSPath, options: .content("views/**/*.html"))
 ```
 
 If you'd like Tailwind to keep watching for file changes, you can pass the `.watch` option:

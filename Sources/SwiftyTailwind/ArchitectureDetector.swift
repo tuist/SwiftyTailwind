@@ -24,6 +24,7 @@ class ArchitectureDetector: ArchitectureDetecting {
         _ = try? process.launch()
         let result = try? process.waitUntilExit()
         let output = try? result?.utf8Output().spm_chomp()
+        print("YOLO \(output)")
         return CpuArchitecture(rawValue: output ?? "")
     }
 }

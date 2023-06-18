@@ -42,7 +42,6 @@ class Executor: Executing {
             if let errorString = String.init(bytes: error, encoding: .utf8) {
                 self?.logger.error("\(errorString)")
             }
-            
         }))
         try process.launch()
         try await process.waitUntilExit()
