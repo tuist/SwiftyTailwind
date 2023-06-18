@@ -1,6 +1,9 @@
 import Foundation
 import Logging
 import TSCBasic
+import AsyncHTTPClient
+import NIOCore
+import NIOFoundationCompat
 
 /*
  An enum that represents the various errors that the `Downloader` can throw.
@@ -56,7 +59,7 @@ class Downloader: Downloading {
         guard let binaryName = binaryName() else {
             throw DownloaderError.unableToDetermineBinaryName
         }
-        let expectedVersion = await versionToDownload(version: version)
+        let expectedVersion = try await versionToDownload(version: version)
         let binaryPath = directory.appending(components: [expectedVersion, binaryName])
         if localFileSystem.exists(binaryPath) { return binaryPath }
         try await downloadBinary(name: binaryName, version: expectedVersion, to: binaryPath)
@@ -68,20 +71,39 @@ class Downloader: Downloading {
             logger.debug("Creating directory \(downloadPath.parentDirectory)")
             try localFileSystem.createDirectory(downloadPath.parentDirectory, recursive: true)
         }
-        let url = URL(string: "https://github.com/tailwindlabs/tailwindcss/releases/download/\(version)/\(name)")!
+        let url = "https://github.com/tailwindlabs/tailwindcss/releases/download/\(version)/\(name)"
         logger.debug("Downloading binary \(name) from version \(version)...")
-        let (localURL, _) = try await URLSession(configuration: .default).download(from: url)
-        let localPath = try! AbsolutePath(validating: localURL.path())
-        logger.debug("Giving the binary executable permissions")
-        try localFileSystem.chmod(.executable, path: localPath)
-        logger.debug("Moving the binary to the final destination")
-        try localFileSystem.copy(from: localPath, to: downloadPath)
+        let client = HTTPClient(eventLoopGroupProvider: .createNew)
+        let request = try HTTPClient.Request(url: url)
+        let delegate = try FileDownloadDelegate(path: downloadPath.pathString, reportProgress: { [weak self] in
+            if let totalBytes = $0.totalBytes {
+                self?.logger.debug("Total bytes count: \(totalBytes)")
+            }
+            self?.logger.debug("Downloaded \($0.receivedBytes) bytes so far")
+        })
+        do {
+            try await withCheckedThrowingContinuation { continuation in
+                client.execute(request: request, delegate: delegate).futureResult.whenComplete { result in
+                    switch result {
+                    case .success(_):
+                        try? localFileSystem.chmod(.executable, path: downloadPath)
+                        continuation.resume()
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+                    }
+                }
+            }
+        } catch {
+            try await client.shutdown()
+            throw error
+        }
+        try await client.shutdown()
     }
     
     /**
      Returns the version that should be downloaded.
      */
-    private func versionToDownload(version: TailwindVersion) async -> String {
+    private func versionToDownload(version: TailwindVersion) async throws -> String {
         switch version {
         case .fixed(let rawVersion):
             if rawVersion.starts(with: "v") {
@@ -92,20 +114,36 @@ class Downloader: Downloading {
                  */
                 return "v\(rawVersion)"
             }
-        case .latest: return await latestVersion()
+        case .latest: return try await latestVersion()
         }
     }
     
     /**
      It obtains the latest available release from GitHub releases
      */
-    private func latestVersion() async -> String {
-        let latestReleaseURL = URL(string: "https://api.github.com/repos/tailwindlabs/tailwindcss/releases/latest")!
+    private func latestVersion() async throws -> String {
+        let latestReleaseURL = "https://api.github.com/repos/tailwindlabs/tailwindcss/releases/latest"
         logger.debug("Getting the latest Tailwind version from \(latestReleaseURL)")
-        let (data, _) = try! await URLSession(configuration: .default).data(from: latestReleaseURL)
-        let json = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
-        let tagName = json["tag_name"] as! String
-        logger.debug("The latest Tailwind version available is \(tagName)")
+        
+        let httpClient = HTTPClient(eventLoopGroupProvider: .createNew)
+        
+        var tagName: String!
+        do {
+            var request = HTTPClientRequest(url: latestReleaseURL)
+            request.headers.add(name: "Content-Type", value: "application/json")
+            request.headers.add(name: "User-Agent", value: "me.pepicrft.SwiftyTailwind")
+            let response = try await httpClient.execute(request, timeout: .seconds(30))
+            let body = try await response.body.collect(upTo: 1024 * 1024)
+            let json = try! JSONSerialization.jsonObject(with: Data(buffer: body)) as! [String: Any]
+            tagName = json["tag_name"] as! String
+            logger.debug("The latest Tailwind version available is \(tagName!)")
+        } catch {
+            try await httpClient.shutdown()
+            throw error
+        }
+        
+        try await httpClient.shutdown()
+        
         return tagName
     }
     
