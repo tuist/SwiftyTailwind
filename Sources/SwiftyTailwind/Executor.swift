@@ -1,6 +1,6 @@
 import Foundation
 import TSCBasic
-import OSLog
+import Logging
 
 /**
  Executing describes the interface to run system processes. Executors are used by `SwiftyTailwind` to run the Tailwind executable using system processes.
@@ -26,7 +26,7 @@ class Executor: Executing {
      Creates a new instance of `Executor`
      */
     init() {
-        self.logger = Logger(subsystem: "me.pepicrft.SwiftyTailwind", category: "Executor")
+        self.logger = Logger(label: "me.pepicrft.SwiftyTailwind.Executor")
     }
     
     func run(executablePath: TSCBasic.AbsolutePath, directory: AbsolutePath, arguments: [String]) async throws {

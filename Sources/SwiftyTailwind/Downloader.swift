@@ -1,5 +1,5 @@
 import Foundation
-import OSLog
+import Logging
 import TSCBasic
 
 /*
@@ -43,7 +43,7 @@ class Downloader: Downloading {
     
     init(architectureDetector: ArchitectureDetecting = ArchitectureDetector()) {
         self.architectureDetector = architectureDetector
-        self.logger = Logger(subsystem: "me.pepicrft.SwiftyTailwind", category: "Downloader")
+        self.logger = Logger(label: "me.pepicrft.SwiftyTailwind.Downloader")
     }
     
     func download() async throws -> TSCBasic.AbsolutePath {
