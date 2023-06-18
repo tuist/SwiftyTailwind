@@ -1,6 +1,6 @@
-# SwiftyTailwind
+# SwiftyTailwind 🍃
 
-**SwiftyTailwind** is a Swift Package to lazily download and run the Tailwind CLI from a Swift project (e.g. [Vapor](https://vapor.codes) app or [Publish](https://github.com/JohnSundell/Publish) project). 
+**SwiftyTailwind** is a Swift Package to lazily download and run the [Tailwind](https://tailwindcss.com) CLI from a Swift project (e.g. [Vapor](https://vapor.codes) app or [Publish](https://github.com/JohnSundell/Publish) project). 
 
 ## Usage
 
