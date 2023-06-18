@@ -26,8 +26,6 @@ jobs:
           - '5.8.1'
         swift-compat-ver:
           - '5'
-          - '4.2'
-          - '4'
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
