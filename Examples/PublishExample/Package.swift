@@ -8,12 +8,19 @@ let package = Package(
     platforms: [
         .macOS(.v13),
     ],
+    products: [
+        .executable(name: "PublishExample", targets: ["PublishExample"])
+    ],
     dependencies: [
+        .package(url: "https://github.com/johnsundell/publish.git", .upToNextMinor(from: "0.9.0")),
+        .package(path: "../../")
     ],
     targets: [
         .target(
             name: "PublishExample",
             dependencies: [
+                .product(name: "Publish", package: "publish"),
+                .product(name: "SwiftyTailwind", package: "SwiftyTailwind")
             ]
         )
     ]

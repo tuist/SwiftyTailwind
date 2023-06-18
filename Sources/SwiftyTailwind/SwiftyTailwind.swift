@@ -15,8 +15,17 @@ public class SwiftyTailwind {
      - version: The version of Tailwind to use. You can specify a fixed version or use the latest one.
      - directory: The directory where the executables will be downloaded. When not provided, it defaults to the system's default temporary directory.
      */
-    convenience init(version: TailwindVersion = .latest, directory: AbsolutePath = Downloader.defaultDownloadDirectory()) {
+    public convenience init(version: TailwindVersion = .latest, directory: AbsolutePath) {
         self.init(version: version, directory: directory, downloader: Downloader(), executor: Executor())
+    }
+    
+    /**
+     Default initializer.
+     - Parameters:
+     - version: The version of Tailwind to use. You can specify a fixed version or use the latest one.
+     */
+    public convenience init(version: TailwindVersion = .latest) {
+        self.init(version: version, directory: Downloader.defaultDownloadDirectory(), downloader: Downloader(), executor: Executor())
     }
     
     init(version: TailwindVersion,
