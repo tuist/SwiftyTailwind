@@ -16,7 +16,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-tools-support-core.git", .upToNextMinor(from: "0.5.2")),
-        .package(url: "https://github.com/ITzTravelInTime/SwiftCPUDetect", .upToNextMinor(from: "1.3.0"))
+        .package(url: "https://github.com/ITzTravelInTime/SwiftCPUDetect", .upToNextMinor(from: "1.3.0")),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.2.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
