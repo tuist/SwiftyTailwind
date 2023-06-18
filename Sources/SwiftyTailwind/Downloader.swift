@@ -151,7 +151,7 @@ class Downloader: Downloading {
         It returns the name of the artifact that we should pull from the GitHub release. The artifact follows the convention: tailwindcss-{os}-{arch}
      */
     private func binaryName() -> String? {
-        guard let architecture = architectureDetector.architecture()?.rawValue else {
+        guard let architecture = architectureDetector.architecture()?.tailwindValue else {
             return nil
         }
         var os: String!

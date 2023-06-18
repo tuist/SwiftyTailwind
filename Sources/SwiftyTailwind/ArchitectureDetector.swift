@@ -5,7 +5,15 @@ import TSCUtility
 public enum CpuArchitecture: String, Hashable  {
     case arm64   = "arm64"
     case armv7   = "armv7"
-    case x64   = "x64"
+    case x86_64   = "x86_64"
+    
+    var tailwindValue: String {
+        switch self {
+        case .arm64: return "arm64"
+        case .armv7: return "armv7"
+        case .x86_64: return "x64"
+        }
+    }
 }
 
 /**
@@ -24,7 +32,6 @@ class ArchitectureDetector: ArchitectureDetecting {
         _ = try? process.launch()
         let result = try? process.waitUntilExit()
         let output = try? result?.utf8Output().spm_chomp()
-        print("YOLO \(output)")
         return CpuArchitecture(rawValue: output ?? "")
     }
 }
