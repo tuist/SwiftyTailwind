@@ -20,22 +20,24 @@ If you don't pass any argument, it defaults to the latest version in the system'
 
 ### Initializing a `tailwind.config.js`
 
-You can create a `tailwind.config.js` configuration file by running the `initialize` function on the `SwiftyTailwind` instance:
+You can create a `tailwind.config.js` configuration file by running the [`initialize`](https://swiftytailwind.pepicrft.me/documentation/swiftytailwind/swiftytailwind/initialize(directory:options:)) function on the `SwiftyTailwind` instance:
 
 
 ```swift
 try await tailwind.initialize()
 ```
 
+Check out all the available options in [the documentation](https://swiftytailwind.pepicrft.me/documentation/swiftytailwind/swiftytailwind/initializeoption).
+
 ### Running Tailwind
 
-To run Tailwind against a project, you can use the `run` function:
+To run Tailwind against a project, you can use the [`run`](https://swiftytailwind.pepicrft.me/documentation/swiftytailwind/swiftytailwind/run(input:output:directory:options:)) function:
 
 ```swift
 try await subject.run(input: inputCSSPath, output: outputCSSPath, .content("views/**/*.html"))
 ```
 
-If you'd like Tailwind to watch keep running watching for file changes, you can pass the `.watch` option:
+If you'd like Tailwind to keep running watching for file changes, you can pass the `.watch` option:
 
 
 ```swift
@@ -44,6 +46,8 @@ try await subject.run(input: inputCSSPath,
                       .watch,
                       .content("views/**/*.html"))
 ```
+
+Check out all the available options in the [documentation](https://swiftytailwind.pepicrft.me/documentation/swiftytailwind/swiftytailwind/runoption).
 
 ## Sponsor
 
