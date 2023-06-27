@@ -47,7 +47,7 @@ class Executor: Executing {
                          */
                         self.logger.info("\(errorString)")
                     }
-                }), startNewProcessGroup: true)
+                }), startNewProcessGroup: false)
                 do {
                     let inputStream = try process.launch()
                     try process.waitUntilExit()
