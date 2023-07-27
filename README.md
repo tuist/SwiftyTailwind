@@ -25,18 +25,18 @@ If you don't pass any argument, it defaults to the latest version in the system'
 
 ### Initializing a `tailwind.config.js`
 
-You can create a `tailwind.config.js` configuration file by running the [`initialize`](https://swiftytailwind.tuist.me/documentation/swiftytailwind/swiftytailwind/initialize(directory:options:)) function on the `SwiftyTailwind` instance:
+You can create a `tailwind.config.js` configuration file by running the [`initialize`](https://swiftytailwind.tuist.io/documentation/swiftytailwind/swiftytailwind/initialize(directory:options:)) function on the `SwiftyTailwind` instance:
 
 
 ```swift
 try await tailwind.initialize()
 ```
 
-Check out all the available options in [the documentation](https://swiftytailwind.tuist.me/documentation/swiftytailwind/swiftytailwind/initializeoption).
+Check out all the available options in [the documentation](https://swiftytailwind.tuist.io/documentation/swiftytailwind/swiftytailwind/initializeoption).
 
 ### Running Tailwind
 
-To run Tailwind against a project, you can use the [`run`](https://swiftytailwind.tuist.me/documentation/swiftytailwind/swiftytailwind/run(input:output:directory:options:)) function:
+To run Tailwind against a project, you can use the [`run`](https://swiftytailwind.tuist.io/documentation/swiftytailwind/swiftytailwind/run(input:output:directory:options:)) function:
 
 ```swift
 try await subject.run(input: inputCSSPath, output: outputCSSPath, options: .content("views/**/*.html"))
@@ -51,4 +51,4 @@ try await subject.run(input: inputCSSPath,
                       options: .watch, .content("views/**/*.html"))
 ```
 
-Check out all the available options in the [documentation](https://swiftytailwind.tuist.me/documentation/swiftytailwind/swiftytailwind/runoption).
+Check out all the available options in the [documentation](https://swiftytailwind.tuist.io/documentation/swiftytailwind/swiftytailwind/runoption).
