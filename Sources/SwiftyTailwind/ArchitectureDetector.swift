@@ -3,13 +3,14 @@ import TSCBasic
 import TSCUtility
 
 public enum CpuArchitecture: String, Hashable  {
+    case aarch64   = "aarch64"
     case arm64   = "arm64"
     case armv7   = "armv7"
     case x86_64   = "x86_64"
     
     var tailwindValue: String {
         switch self {
-        case .arm64: return "arm64"
+        case .arm64, .aarch64: return "arm64"
         case .armv7: return "armv7"
         case .x86_64: return "x64"
         }
