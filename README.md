@@ -56,6 +56,41 @@ try await subject.run(input: inputCSSPath,
 
 Check out all the available options in the [documentation](https://swiftytailwind.tuist.io/documentation/swiftytailwind/swiftytailwind/runoption).
 
+### Integrating with Vapor
+
+You can integrate this with Vapor by setting up a `tailwind.swift`
+
+```swift
+import SwiftyTailwind
+import TSCBasic
+import Vapor
+
+func tailwind(_ app: Application) async throws {
+  let resourecesDirectory = try AbsolutePath(validating: app.directory.resourcesDirectory)
+  let publicDirectory = try AbsolutePath(validating: app.directory.publicDirectory)
+
+  let tailwind = SwiftyTailwind()
+  try await tailwind.run(
+    input: .init(validating: "Styles/app.css", relativeTo: resourecesDirectory),
+    output: .init(validating: "app.generated.css", relativeTo: publicDirectory),
+    options: .content("\(app.directory.viewsDirectory)/**/*.leaf")
+  )
+}
+```
+
+Then in `configure.swift`
+
+```swift
+try await tailwind(app)
+app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+```
+
+And in your `index.leaf`
+
+```html
+<link rel="stylesheet" href="/styles/app.generated.css" />
+```
+
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
