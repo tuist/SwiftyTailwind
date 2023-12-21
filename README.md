@@ -72,7 +72,7 @@ func tailwind(_ app: Application) async throws {
   let tailwind = SwiftyTailwind()
   try await tailwind.run(
     input: .init(validating: "Styles/app.css", relativeTo: resourecesDirectory),
-    output: .init(validating: "app.generated.css", relativeTo: publicDirectory),
+    output: .init(validating: "styles/app.generated.css", relativeTo: publicDirectory),
     options: .content("\(app.directory.viewsDirectory)/**/*.leaf")
   )
 }
