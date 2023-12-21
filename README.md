@@ -15,7 +15,7 @@
 First, you need to add `SwiftyTailwind` as a dependency in your project's `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/tuist/SwiftyTailwind.git", .upToNextMinor(from: "0.1.0"))
+.package(url: "https://github.com/tuist/SwiftyTailwind.git", .upToNextMinor(from: "0.5.0"))
 ```
 
 Once added, you'll create an instance of `SwiftyTailwind` specifying the version you'd like to use and where you'd like it to be downloaded.
