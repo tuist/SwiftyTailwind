@@ -12,6 +12,9 @@ concurrency:
 
 jobs:
   deploy:
+    permissions:
+      contents: read
+      deployments: write
     name: Deploy Documentation
     runs-on: macos-13
     steps:
