@@ -58,7 +58,7 @@ Check out all the available options in the [documentation](https://swiftytailwin
 
 ### Integrating with Vapor
 
-You can integrate this with Vapor by setting up a `tailwind.swift`
+You can integrate this with Vapor by setting up a `tailwind.swift`:
 
 ```swift
 import SwiftyTailwind
@@ -66,26 +66,26 @@ import TSCBasic
 import Vapor
 
 func tailwind(_ app: Application) async throws {
-  let resourecesDirectory = try AbsolutePath(validating: app.directory.resourcesDirectory)
+  let resourcesDirectory = try AbsolutePath(validating: app.directory.resourcesDirectory)
   let publicDirectory = try AbsolutePath(validating: app.directory.publicDirectory)
 
   let tailwind = SwiftyTailwind()
   try await tailwind.run(
-    input: .init(validating: "Styles/app.css", relativeTo: resourecesDirectory),
+    input: .init(validating: "Styles/app.css", relativeTo: resourcesDirectory),
     output: .init(validating: "styles/app.generated.css", relativeTo: publicDirectory),
     options: .content("\(app.directory.viewsDirectory)/**/*.leaf")
   )
 }
 ```
 
-Then in `configure.swift`
+Then in `configure.swift`:
 
 ```swift
 try await tailwind(app)
 app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 ```
 
-And in your `index.leaf`
+And in your `index.leaf`:
 
 ```html
 <link rel="stylesheet" href="/styles/app.generated.css" />
