@@ -90,6 +90,50 @@ And in your `index.leaf`
 ```html
 <link rel="stylesheet" href="/styles/app.generated.css" />
 ```
+### Running Vapor and Tailwind watch in parallel
+
+It can be desirable for Tailwind to watch and rebuild changes without restarting the Vapor server.
+It is also best to restrict this behavior for development only.
+
+You can integrate this behavior by setting up a `tailwind.swift`:
+
+```swift
+#if DEBUG
+import SwiftyTailwind
+import TSCBasic
+import Vapor
+
+func runTailwind(_ app: Application) async throws {
+    let resourcesDirectory = try AbsolutePath(validating: app.directory.resourcesDirectory)
+    let publicDirectory = try AbsolutePath(validating: app.directory.publicDirectory)
+    let tailwind = SwiftyTailwind()
+    
+    async let runTailwind: () = tailwind.run(
+        input: .init(validating: "Styles/app.css", relativeTo: resourcesDirectory),
+        output: .init(validating: "styles/app.generated.css", relativeTo: publicDirectory),
+        options: .watch, .content("\(app.directory.viewsDirectory)/**/*.leaf"))
+    return try await runTailwind
+}
+#endif
+```
+
+and then in `entrypoint.swift`, replace `try await app.execute()` with:
+
+```swift
+#if DEBUG
+        if (env.arguments.contains { arg in arg == "migrate" }) {
+            try await app.execute()
+        } else {
+            async let runApp: () = try await app.execute()
+            _ = await [try runTailwind(app), try await runApp]
+        }
+#else
+        try await app.execute()
+#endif
+```
+
+The check for `migrate` in the arguments will ensure that it doesn't run when doing migrations in development.
+Additionally, it may be a good idea to setup a script to minify the CSS before deploying to production.
 
 ## Contributors ✨
 
