@@ -58,7 +58,7 @@ Check out all the available options in the [documentation](https://swiftytailwin
 
 ### Integrating with Vapor
 
-You can integrate this with Vapor by setting up a `tailwind.swift`
+You can integrate this with Vapor by setting up a `tailwind.swift`:
 
 ```swift
 import SwiftyTailwind
@@ -66,30 +66,74 @@ import TSCBasic
 import Vapor
 
 func tailwind(_ app: Application) async throws {
-  let resourecesDirectory = try AbsolutePath(validating: app.directory.resourcesDirectory)
+  let resourcesDirectory = try AbsolutePath(validating: app.directory.resourcesDirectory)
   let publicDirectory = try AbsolutePath(validating: app.directory.publicDirectory)
 
   let tailwind = SwiftyTailwind()
   try await tailwind.run(
-    input: .init(validating: "Styles/app.css", relativeTo: resourecesDirectory),
+    input: .init(validating: "Styles/app.css", relativeTo: resourcesDirectory),
     output: .init(validating: "styles/app.generated.css", relativeTo: publicDirectory),
     options: .content("\(app.directory.viewsDirectory)/**/*.leaf")
   )
 }
 ```
 
-Then in `configure.swift`
+Then in `configure.swift`:
 
 ```swift
 try await tailwind(app)
 app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 ```
 
-And in your `index.leaf`
+And in your `index.leaf`:
 
 ```html
 <link rel="stylesheet" href="/styles/app.generated.css" />
 ```
+### Running Vapor and Tailwind watch in parallel
+
+It can be desirable for Tailwind to watch and rebuild changes without restarting the Vapor server.
+It is also best to restrict this behavior for development only.
+
+You can integrate this behavior by setting up a `tailwind.swift`:
+
+```swift
+#if DEBUG
+import SwiftyTailwind
+import TSCBasic
+import Vapor
+
+func runTailwind(_ app: Application) async throws {
+    let resourcesDirectory = try AbsolutePath(validating: app.directory.resourcesDirectory)
+    let publicDirectory = try AbsolutePath(validating: app.directory.publicDirectory)
+    let tailwind = SwiftyTailwind()
+    
+    async let runTailwind: () = tailwind.run(
+        input: .init(validating: "Styles/app.css", relativeTo: resourcesDirectory),
+        output: .init(validating: "styles/app.generated.css", relativeTo: publicDirectory),
+        options: .watch, .content("\(app.directory.viewsDirectory)/**/*.leaf"))
+    return try await runTailwind
+}
+#endif
+```
+
+and then in `entrypoint.swift`, replace `try await app.execute()` with:
+
+```swift
+#if DEBUG
+        if (env.arguments.contains { arg in arg == "migrate" }) {
+            try await app.execute()
+        } else {
+            async let runApp: () = try await app.execute()
+            _ = await [try runTailwind(app), try await runApp]
+        }
+#else
+        try await app.execute()
+#endif
+```
+
+The check for `migrate` in the arguments will ensure that it doesn't run when doing migrations in development.
+Additionally, it may be a good idea to setup a script to minify the CSS before deploying to production.
 
 ## Contributors ✨
 
