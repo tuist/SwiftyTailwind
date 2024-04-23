@@ -16,7 +16,7 @@ jobs:
       contents: read
       deployments: write
     name: Deploy Documentation
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - name: Checkout Package
         uses: actions/checkout@v4
