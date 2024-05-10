@@ -77,7 +77,7 @@ class Downloader: Downloading {
         try await downloadChecksumFile(version: expectedVersion, to: checksumPath)
         do {
             let binaryChecksum = try Self.checksumValidator.generateChecksumFrom(binaryPath)
-            guard Self.checksumValidator.compareChecksum(from: checksumPath, to: binaryChecksum) else {
+            guard try Self.checksumValidator.compareChecksum(from: checksumPath, to: binaryChecksum) else {
                 
                 if numRetries < 5 {
                     // retry download
