@@ -81,8 +81,8 @@ class Downloader: Downloading {
                 
                 if numRetries < 5 {
                     // retry download
-                    numRetries += 1
                     logger.error("Checksum validation failed. Attempt #\(numRetries + 1) to retry download...")
+                    numRetries += 1
                     return try await download(version: version, directory: binaryPath)
                 } else {
                     throw DownloaderError.checksumIsIncorrect
