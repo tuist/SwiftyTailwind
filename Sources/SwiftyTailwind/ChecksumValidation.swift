@@ -1,5 +1,4 @@
 import Foundation
-import CommonCrypto
 import TSCBasic
 
 protocol ChecksumValidating {
@@ -9,46 +8,24 @@ protocol ChecksumValidating {
 
 struct ChecksumValidation: ChecksumValidating {
     func generateChecksumFrom(_ filePath: AbsolutePath) throws -> String {
-        let binaryData = try Data(contentsOf: filePath.asURL)
-        return binaryData.sha256()
+        let checksumGenerationTask = Process()
+        checksumGenerationTask.launchPath = "shasum"
+        checksumGenerationTask.arguments = ["-a", "256", filePath.pathString]
+        
+        let pipe = Pipe()
+        checksumGenerationTask.standardOutput = pipe
+        checksumGenerationTask.launch()
+        
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        guard let output = String(data: data, encoding: String.Encoding.utf8) else {
+            throw DownloaderError.errorReadingFilesForChecksumValidation
+        }
+        
+        return output
     }
     
     func compareChecksum(from filePath: AbsolutePath, to checksum: String) throws -> Bool {
         let checksumString = try String(contentsOf: filePath.asURL)
-        return checksum == checksumString.sha256()
-    }
-}
-
-extension Data{
-    public func sha256() -> String{
-        return hexStringFromData(input: digest(input: self as NSData))
-    }
-    
-    private func digest(input : NSData) -> NSData {
-        let digestLength = Int(CC_SHA256_DIGEST_LENGTH)
-        var hash = [UInt8](repeating: 0, count: digestLength)
-        CC_SHA256(input.bytes, UInt32(input.length), &hash)
-        return NSData(bytes: hash, length: digestLength)
-    }
-    
-    private  func hexStringFromData(input: NSData) -> String {
-        var bytes = [UInt8](repeating: 0, count: input.length)
-        input.getBytes(&bytes, length: input.length)
-        
-        var hexString = ""
-        for byte in bytes {
-            hexString += String(format:"%02x", UInt8(byte))
-        }
-        
-        return hexString
-    }
-}
-
-extension String {
-    func sha256() -> String{
-        if let stringData = self.data(using: String.Encoding.utf8) {
-            return stringData.sha256()
-        }
-        return ""
+        return checksum == checksumString
     }
 }

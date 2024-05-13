@@ -36,7 +36,7 @@ protocol Downloading {
     /**
      It downloads the given version of Tailwind in the given directory.
      */
-    func download(version: TailwindVersion, directory: AbsolutePath) async throws -> AbsolutePath
+    func download(version: TailwindVersion, directory: AbsolutePath, numRetries: Int) async throws -> AbsolutePath
 }
 
 class Downloader: Downloading {
@@ -52,7 +52,6 @@ class Downloader: Downloading {
     
     static let sha256FileName: String = "sha256sums.txt"
     static let checksumValidator: ChecksumValidating = ChecksumValidation()
-    var numRetries = 0
     
     init(architectureDetector: ArchitectureDetecting = ArchitectureDetector()) {
         self.architectureDetector = architectureDetector
@@ -64,7 +63,8 @@ class Downloader: Downloading {
     }
     
     func download(version: TailwindVersion,
-                  directory: AbsolutePath) async throws -> AbsolutePath
+                  directory: AbsolutePath,
+                  numRetries: Int = 0) async throws -> AbsolutePath
     {
         guard let binaryName = binaryName() else {
             throw DownloaderError.unableToDetermineBinaryName
@@ -74,7 +74,7 @@ class Downloader: Downloading {
         if localFileSystem.exists(binaryPath) { return binaryPath }
         try await downloadBinary(name: binaryName, version: expectedVersion, to: binaryPath)
         let checksumPath = directory.appending(components: [expectedVersion, Self.sha256FileName])
-        try await downloadChecksumFile(version: expectedVersion, to: checksumPath)
+        try await downloadChecksumFile(version: expectedVersion, into: checksumPath)
         do {
             let binaryChecksum = try Self.checksumValidator.generateChecksumFrom(binaryPath)
             guard try Self.checksumValidator.compareChecksum(from: checksumPath, to: binaryChecksum) else {
@@ -82,14 +82,17 @@ class Downloader: Downloading {
                 if numRetries < 5 {
                     // retry download
                     logger.error("Checksum validation failed. Attempt #\(numRetries + 1) to retry download...")
-                    numRetries += 1
-                    return try await download(version: version, directory: binaryPath)
+                    return try await download(version: version, directory: directory, numRetries: numRetries + 1)
                 } else {
                     throw DownloaderError.checksumIsIncorrect
                 }
             }
         } catch {
-            logger.error("Error accessing checksum file or binary for checksum validation. Error: \(error.localizedDescription)")
+            if error.localizedDescription == DownloaderError.checksumIsIncorrect.localizedDescription {
+                throw error
+            } else {
+                logger.error("Error accessing checksum file or binary for checksum validation. Error: \(error.localizedDescription)")
+            }
         }
         return binaryPath
     }

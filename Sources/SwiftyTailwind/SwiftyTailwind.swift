@@ -78,7 +78,7 @@ public class SwiftyTailwind {
      Downloads the Tailwind portable executable
      */
     private func download() async throws -> AbsolutePath {
-        try await downloader.download(version: version, directory: directory)
+        try await downloader.download(version: version, directory: directory, numRetries: 0)
     }
 }
 
