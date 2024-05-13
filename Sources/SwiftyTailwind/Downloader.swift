@@ -21,7 +21,7 @@ enum DownloaderError: LocalizedError {
         case .unableToDetermineBinaryName:
             return "We were unable to determine Tailwind's binary name for this architecture and OS."
         case .checksumIsIncorrect:
-            return "We attempted 5 downloads of the binary but the checksum never matched. Aborting."
+            return "We attempted 5 downloads of the binary but the checksum never matched."
         case .errorReadingFilesForChecksumValidation:
             return "We were unable to read files for checksum validation."
         }
