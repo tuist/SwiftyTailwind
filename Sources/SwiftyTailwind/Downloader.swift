@@ -128,7 +128,7 @@ class Downloader: Downloading {
         try await client.shutdown()
     }
     
-    private func downloadChecksumFile(version: String, to downloadPath: AbsolutePath) async throws {
+    private func downloadChecksumFile(version: String, into downloadPath: AbsolutePath) async throws {
         try await downloadBinary(name: Self.sha256FileName, version: version, to: downloadPath)
     }
     
