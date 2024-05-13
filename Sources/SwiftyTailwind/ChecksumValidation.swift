@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Brady Klein on 5/10/24.
-//
-
 import Foundation
 import CommonCrypto
 import TSCBasic
