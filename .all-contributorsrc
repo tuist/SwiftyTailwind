@@ -24,6 +24,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "bklein18",
+      "name": "Brady Klein",
+      "avatar_url": "https://avatars.githubusercontent.com/u/31358894?v=4",
+      "profile": "http://www.bradyklein.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
