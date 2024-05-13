@@ -23,7 +23,7 @@ enum DownloaderError: LocalizedError {
         case .checksumIsIncorrect:
             return "We attempted 5 downloads of the binary but the checksum never matched. Aborting."
         case .errorReadingFilesForChecksumValidation:
-            return "We were unable to read files for checksum validation. Aborting."
+            return "We were unable to read files for checksum validation."
         }
     }
 }
