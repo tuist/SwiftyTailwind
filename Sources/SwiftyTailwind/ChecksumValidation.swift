@@ -9,7 +9,7 @@ protocol ChecksumValidating {
 struct ChecksumValidation: ChecksumValidating {
     func generateChecksumFrom(_ filePath: AbsolutePath) throws -> String {
         let checksumGenerationTask = Process()
-        checksumGenerationTask.launchPath = "shasum"
+        checksumGenerationTask.launchPath = "/usr/bin/shasum"
         checksumGenerationTask.arguments = ["-a", "256", filePath.pathString]
         
         let pipe = Pipe()
