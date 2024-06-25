@@ -13,11 +13,17 @@ enum DownloaderError: LocalizedError {
      This error is thrown when the binary name cannot be determined.
      */
     case unableToDetermineBinaryName
+    case checksumIsIncorrect
+    case errorReadingFilesForChecksumValidation
     
     var errorDescription: String? {
         switch self {
         case .unableToDetermineBinaryName:
             return "We were unable to determine Tailwind's binary name for this architecture and OS."
+        case .checksumIsIncorrect:
+            return "We attempted 5 downloads of the binary but the checksum never matched."
+        case .errorReadingFilesForChecksumValidation:
+            return "We were unable to read files for checksum validation."
         }
     }
 }
@@ -30,7 +36,7 @@ protocol Downloading {
     /**
      It downloads the given version of Tailwind in the given directory.
      */
-    func download(version: TailwindVersion, directory: AbsolutePath) async throws -> AbsolutePath
+    func download(version: TailwindVersion, directory: AbsolutePath, numRetries: Int) async throws -> AbsolutePath
 }
 
 class Downloader: Downloading {
@@ -44,6 +50,9 @@ class Downloader: Downloading {
         return try! localFileSystem.tempDirectory.appending(component: "SwiftyTailwind")
     }
     
+    static let sha256FileName: String = "sha256sums.txt"
+    static let checksumValidator: ChecksumValidating = ChecksumValidation()
+    
     init(architectureDetector: ArchitectureDetecting = ArchitectureDetector()) {
         self.architectureDetector = architectureDetector
         self.logger = Logger(label: "io.tuist.SwiftyTailwind.Downloader")
@@ -54,7 +63,8 @@ class Downloader: Downloading {
     }
     
     func download(version: TailwindVersion,
-                  directory: AbsolutePath) async throws -> AbsolutePath
+                  directory: AbsolutePath,
+                  numRetries: Int = 0) async throws -> AbsolutePath
     {
         guard let binaryName = binaryName() else {
             throw DownloaderError.unableToDetermineBinaryName
@@ -63,6 +73,27 @@ class Downloader: Downloading {
         let binaryPath = directory.appending(components: [expectedVersion, binaryName])
         if localFileSystem.exists(binaryPath) { return binaryPath }
         try await downloadBinary(name: binaryName, version: expectedVersion, to: binaryPath)
+        let checksumPath = directory.appending(components: [expectedVersion, Self.sha256FileName])
+        try await downloadChecksumFile(version: expectedVersion, into: checksumPath)
+        do {
+            let binaryChecksum = try Self.checksumValidator.generateChecksumFrom(binaryPath)
+            guard try Self.checksumValidator.compareChecksum(from: checksumPath, to: binaryChecksum) else {
+                
+                if numRetries < 5 {
+                    // retry download
+                    logger.error("Checksum validation failed. Attempt #\(numRetries + 1) to retry download...")
+                    return try await download(version: version, directory: directory, numRetries: numRetries + 1)
+                } else {
+                    throw DownloaderError.checksumIsIncorrect
+                }
+            }
+        } catch {
+            if error.localizedDescription == DownloaderError.checksumIsIncorrect.localizedDescription {
+                throw error
+            } else {
+                logger.error("Error accessing checksum file or binary for checksum validation. Error: \(error.localizedDescription)")
+            }
+        }
         return binaryPath
     }
     
@@ -98,6 +129,10 @@ class Downloader: Downloading {
             throw error
         }
         try await client.shutdown()
+    }
+    
+    private func downloadChecksumFile(version: String, into downloadPath: AbsolutePath) async throws {
+        try await downloadBinary(name: Self.sha256FileName, version: version, to: downloadPath)
     }
     
     /**
