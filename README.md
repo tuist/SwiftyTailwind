@@ -72,7 +72,7 @@ func tailwind(_ app: Application) async throws {
   try await tailwind.run(
     input: .init(validating: "Styles/app.css", relativeTo: resourcesDirectory),
     output: .init(validating: "styles/app.generated.css", relativeTo: publicDirectory),
-    options: .content("\(app.directory.viewsDirectory)/**/*.leaf")
+    options: .content("\(app.directory.viewsDirectory)**/*.leaf")
   )
 }
 ```
@@ -110,7 +110,7 @@ func runTailwind(_ app: Application) async throws {
     async let runTailwind: () = tailwind.run(
         input: .init(validating: "Styles/app.css", relativeTo: resourcesDirectory),
         output: .init(validating: "styles/app.generated.css", relativeTo: publicDirectory),
-        options: .watch, .content("\(app.directory.viewsDirectory)/**/*.leaf"))
+        options: .watch, .content("\(app.directory.viewsDirectory)**/*.leaf"))
     return try await runTailwind
 }
 #endif
